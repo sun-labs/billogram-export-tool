@@ -1,0 +1,22 @@
+{
+  "name": "billogram-export",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "await-to-js": "^2.1.1",
+    "axios": "^0.21.0",
+    "dotenv": "^8.2.0"
+  },
+  "devDependencies": {
+    "backpack-core": "^0.8.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "backpack",
+    "build": "backpack build",
+    "start": "npm run build && node build/main.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
