@@ -12,6 +12,9 @@ Vi tror att fler har detta problemet och anlita konsulter för detta känns löj
 
 ## Instruktioner
 
+Se till att senaste LTS-version av Node är installerat.
+
+1. `npm install`
 1. Kopiera `.env.sample` och döp om den till `.env` i projektet
 2. Navigera in på `Företagsinställning > API` i Billogram
 3. Klicka på `Lägg till API-använadare` 

@@ -16,7 +16,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "backpack",
     "build": "backpack build",
-    "start": "npm run build && node build/main.js"
+    "start": "npm run build && node build/main.js",
+    "export": "npm run start"
   },
   "author": "",
   "license": "ISC"
