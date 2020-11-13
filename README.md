@@ -2,7 +2,7 @@
 
 Vi ville exportera våra kunder från Billogram men det finns inte stöd för det i deras programvara eller via deras support. Konstigt. 
 
-Antar att fler har samma problem så vi släpper det open source.
+Antar att fler har samma problem så here you go!
 
 ## Support
 - :white_check_mark: Export av kunder
@@ -36,5 +36,7 @@ Se till att senaste LTS-version av Node är installerat.
 6. Kör programmet med `npm run export`
 7. CSV-filen ligger i `export/`
 
-`With <3 from Uppsala`
+---
+
+With <3 from Uppsala
 
