@@ -1,6 +1,8 @@
 # Billogram Export
 
-Vi ville exportera våra kunder från Billogram men det finns inte stöd för det i deras programvara eller via deras support. Konstigt. Antar att fler har samma problem så vi släpper det open source.
+Vi ville exportera våra kunder från Billogram men det finns inte stöd för det i deras programvara eller via deras support. Konstigt. 
+
+Antar att fler har samma problem så vi släpper det open source.
 
 ## Support
 - Export av kunder
