@@ -86,9 +86,27 @@ const getAllCustomers = () =>
 const getAllBills = () =>
   getUntilEmpty(getBills)
 
-const saveToFile = (content, fileName) => {
+const getPDF = async (invoiceId) => {
+  const api = getAPI()
+  const [err, res] = await to(
+    api.get(`billogram/${invoiceId}.pdf`)
+  )
+  if (err) return console.log('ERR', err.message, err.response.data)
+  return {
+    id: invoiceId,
+    data: res.data.data.content
+  }
+}
+
+const getPDFsFromBills = async (invoices) => {
+  const promises = invoices.map((invoice) => getPDF(invoice.id))
+  const pdfs = await Promise.all(promises)
+  return pdfs
+}
+
+const saveToFile = (content, fileName, enc = 'utf8') => {
   const filePath = `./export/${fileName}`
-  fs.writeFileSync(filePath, content, 'utf8')
+  fs.writeFileSync(filePath, content, enc)
 }
 
 const arrToCSV = (items = []) => {
@@ -112,19 +130,35 @@ const getEverything = async () => {
     getAllBills(),
     getAllCustomers()
   ])
+  const pdfs = await getPDFsFromBills(bills)
   return {
     bills,
-    customers
+    customers,
+    pdfs
+  }
+}
+
+const cuteMkdir = (path) => {
+  try {
+    fs.mkdirSync(path)
+  } catch (err) {
+    console.log('err creating dir', err.message)
   }
 }
 
 getEverything()
   .then((everything) => {
     const timestamp = new Date().toISOString()
-    const getFileName = (category) => `${timestamp}-${category}.csv`
-    const keys = Object.keys(everything)
-    const flatData = keys.map((key) => everything[key].map(flatten))
+    console.log('INFO, creating export dir')
+    cuteMkdir(`export/${timestamp}`)
+    console.log('INFO, saving csv files..')
+    const getFileName = (category) => `${timestamp}/${category}`
+    const { pdfs, ...rest } = everything
+    const keys = Object.keys(rest)
+    const flatData = keys.map((key) => rest[key].map(flatten))
     const csvs = keys.map((_, i) => arrToCSV(flatData[i]))
-    keys.forEach((key, i) => saveToFile(csvs[i], getFileName(key)))
-    console.log('SUCCESS, export is available in the export/ folder.')
+    keys.forEach((key, i) => saveToFile(csvs[i], getFileName(key + '.csv')))
+    console.log('INFO, saving pdf files..')
+    pdfs.forEach((pdf) => saveToFile(pdf.data, getFileName(pdf.id + '.pdf'), 'base64'))
+    console.log(`SUCCESS, export is available at export/${timestamp}/ folder.`)
   })

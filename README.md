@@ -7,7 +7,7 @@ Antar att fler har samma problem så here you go!
 ## Support
 - :white_check_mark: Export av kunder
 - :white_check_mark: Export av fakturainformation
-- :x: Export av PDF
+- :white_check_mark: Export av PDFer
 
 
 ## Instruktioner
@@ -34,7 +34,7 @@ Se till att senaste LTS-version av Node är installerat.
     API_PASSWORD=0000111122222333334444455556666
     ```
 6. Kör programmet med `npm run export`
-7. CSV-filen ligger i `export/`
+7. Din data ligger i `export/`
 
 ---
 
