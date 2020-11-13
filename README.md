@@ -5,7 +5,9 @@ Vi ville exportera våra kunder från Billogram men det finns inte stöd för de
 Antar att fler har samma problem så vi släpper det open source.
 
 ## Support
-- Export av kunder
+- :white_check_mark: Export av kunder
+- :white_check_mark: Export av fakturainformation
+- :x: Export av PDF
 
 
 ## Instruktioner

@@ -42,12 +42,26 @@ const getCustomers = async (page = 1, pageSize = 100) => {
   return res.data
 }
 
-const getAllCustomers = async () => {
+const getBills = async (page = 1, pageSize = 100) => {
+  const api = getAPI()
+  const [err, res] = await to(
+    api.get('billogram', {
+      params: {
+        page,
+        page_size: pageSize
+      }
+    })
+  )
+  if (err) return console.log('ERR', err.message, err.response.data)
+  return res.data
+}
+
+const getUntilEmpty = async (getFunction) => {
   const pageSize = 100
-  let customers = []
+  let items = []
   let i = 0
   while (true) {
-    const slice = await getCustomers(i + 1, pageSize)
+    const slice = await getFunction(i + 1, pageSize)
     const {
       meta: {
         total_count: totalCount
@@ -59,12 +73,18 @@ const getAllCustomers = async () => {
       console.log(`ERR, got status ${status} from backend. Stopping.`)
       break
     }
-    customers = [...customers, ...data]
+    items = [...items, ...data]
     if (totalCount !== pageSize) break
     i += 1 // next page
   }
-  return customers
+  return items
 }
+
+const getAllCustomers = () =>
+  getUntilEmpty(getCustomers)
+
+const getAllBills = () =>
+  getUntilEmpty(getBills)
 
 const saveToFile = (content, fileName) => {
   const filePath = `./export/${fileName}`
@@ -84,11 +104,11 @@ const arrToCSV = (items = []) => {
   return csvStr
 }
 
-getAllCustomers().then(async (customers) => {
+getAllBills().then(async (customers) => {
   const flattened = customers.map(flatten)
   const csv = arrToCSV(flattened)
 
-  const fileName = `billogram-customerData-${new Date().toISOString()}.csv`
+  const fileName = `billogram-bills-${new Date().toISOString()}.csv`
   saveToFile(csv, fileName)
 }).catch((err) => {
   console.log('error', err)
