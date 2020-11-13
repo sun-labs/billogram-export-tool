@@ -1,7 +1,8 @@
 import axios from 'axios'
 import dotenv from 'dotenv'
 import to from 'await-to-js'
-import { fs } from 'file-system'
+import fs from 'fs'
+import flatten from 'flat'
 
 dotenv.config()
 
@@ -65,36 +66,30 @@ const getAllCustomers = async () => {
   return customers
 }
 
-const handleCSVDownload = (csvContent) => {
-  const fileName = `billogram-customerData-${new Date().toISOString()}.csv`
-  fs.writeFileSync(fileName, csvContent)
+const saveToFile = (content, fileName) => {
+  const filePath = `./export/${fileName}`
+  fs.writeFileSync(filePath, content, 'utf8')
 }
 
-const convertJson2CSV = async (json) => {
-  const items = json
-  // const items = flatten(json)
-  // TODO: flat nested layer in json
-  //   delivery_address: {
-  //     city: '',
-  //     name: '',
-  //     country: '',
-  //     zipcode: '',
-  //     careof: '',
-  //     street_address: ''
-  //   },
-  // },
-  const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-  const header = Object.keys(items[0])
-  let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
-  csv.unshift(header.join(','))
-  csv = csv.join('\r\n')
-  return csv
-}
-
-getAllCustomers().then((res) => {
-  convertJson2CSV(res).then((res) => {
-    handleCSVDownload(res)
+const arrToCSV = (items = []) => {
+  const headers = Object.keys(items[0])
+  const rows = items.map((item) => {
+    const values = headers.map((header) => item[header])
+    const valuesStr = values.join(',')
+    return valuesStr
   })
+  const headerStr = headers.join(',')
+  const csvContent = [headerStr, ...rows]
+  const csvStr = csvContent.join('\r\n')
+  return csvStr
+}
+
+getAllCustomers().then(async (customers) => {
+  const flattened = customers.map(flatten)
+  const csv = arrToCSV(flattened)
+
+  const fileName = `billogram-customerData-${new Date().toISOString()}.csv`
+  saveToFile(csv, fileName)
 }).catch((err) => {
   console.log('error', err)
 })
