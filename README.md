@@ -10,6 +10,10 @@ Du hittar dokumentationen här och skulle det vara så att du inte själv har ut
 
 Vi tror att fler har detta problemet och anlita konsulter för detta känns löjligt.
 
+## Support
+- Export av kunder
+
+
 ## Instruktioner
 
 Se till att senaste LTS-version av Node är installerat.
