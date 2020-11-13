@@ -1,6 +1,8 @@
 import axios from 'axios'
 import dotenv from 'dotenv'
 import to from 'await-to-js'
+import { fs } from 'file-system'
+
 dotenv.config()
 
 const getAPI = () => {
@@ -63,4 +65,36 @@ const getAllCustomers = async () => {
   return customers
 }
 
-getAllCustomers().then(console.log)
+const handleCSVDownload = (csvContent) => {
+  const fileName = `billogram-customerData-${new Date().toISOString()}.csv`
+  fs.writeFileSync(fileName, csvContent)
+}
+
+const convertJson2CSV = async (json) => {
+  const items = json
+  // const items = flatten(json)
+  // TODO: flat nested layer in json
+  //   delivery_address: {
+  //     city: '',
+  //     name: '',
+  //     country: '',
+  //     zipcode: '',
+  //     careof: '',
+  //     street_address: ''
+  //   },
+  // },
+  const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+  const header = Object.keys(items[0])
+  let csv = items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+  csv.unshift(header.join(','))
+  csv = csv.join('\r\n')
+  return csv
+}
+
+getAllCustomers().then((res) => {
+  convertJson2CSV(res).then((res) => {
+    handleCSVDownload(res)
+  })
+}).catch((err) => {
+  console.log('error', err)
+})
