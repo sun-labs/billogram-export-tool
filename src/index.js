@@ -104,12 +104,27 @@ const arrToCSV = (items = []) => {
   return csvStr
 }
 
-getAllBills().then(async (customers) => {
-  const flattened = customers.map(flatten)
-  const csv = arrToCSV(flattened)
+const getEverything = async () => {
+  const [
+    bills,
+    customers
+  ] = await Promise.all([
+    getAllBills(),
+    getAllCustomers()
+  ])
+  return {
+    bills,
+    customers
+  }
+}
 
-  const fileName = `billogram-bills-${new Date().toISOString()}.csv`
-  saveToFile(csv, fileName)
-}).catch((err) => {
-  console.log('error', err)
-})
+getEverything()
+  .then((everything) => {
+    const timestamp = new Date().toISOString()
+    const getFileName = (category) => `${timestamp}-${category}.csv`
+    const keys = Object.keys(everything)
+    const flatData = keys.map((key) => everything[key].map(flatten))
+    const csvs = keys.map((_, i) => arrToCSV(flatData[i]))
+    keys.forEach((key, i) => saveToFile(csvs[i], getFileName(key)))
+    console.log('SUCCESS, export is available in the export/ folder.')
+  })
